@@ -9,6 +9,7 @@
     "prisma:migrate": "prisma migrate dev --name init",
     "prisma:generate": "prisma generate",
     "seed": "node prisma/seed.js"
+    "render-postbuild": "prisma generate && prisma migrate deploy"
   },
   "dependencies": {
     "next": "14.2.0",
