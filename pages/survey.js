@@ -1,16 +1,12 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { useSession } from 'next-auth/react'
 
 export default function SurveyPage(){
   const [survey, setSurvey] = useState(null)
   const [answers, setAnswers] = useState({})
   const [status, setStatus] = useState('')
-  const { data: session } = useSession()
 
-  useEffect(()=>{
-    axios.get('/api/surveys').then(r=> setSurvey(r.data[0]))
-  },[])
+  useEffect(()=>{ axios.get('/api/surveys').then(r=> setSurvey(r.data[0])) },[])
 
   if(!survey) return <div>Loading survey…</div>
 
@@ -24,7 +20,6 @@ export default function SurveyPage(){
     if(missing.length){ setStatus('Please answer all questions'); return }
     setStatus('Submitting...')
     const payload = { surveyId: survey.id, answers }
-    if(session?.user?.email) payload.userEmail = session.user.email
     try{
       await axios.post('/api/surveys', payload)
       setStatus('Submitted — thank you!')

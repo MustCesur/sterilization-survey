@@ -7,23 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String?
-  role      String   @default("staff")
-  responses Response[]
-  createdAt DateTime @default(now())
-}
-
 model Survey {
-  id        String    @id @default(cuid())
-  title     String
+  id          String      @id @default(cuid())
+  title       String
   description String?
-  questions Question[]
-  reports   Report[]
-  createdAt DateTime @default(now())
+  questions   Question[]
+  reports     Report[]
+  responses   Response[]
+  createdAt   DateTime    @default(now())
 }
 
 model Question {
@@ -36,20 +27,21 @@ model Question {
 }
 
 model Response {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   surveyId  String
-  survey    Survey   @relation(fields: [surveyId], references: [id])
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
+  survey    Survey    @relation(fields: [surveyId], references: [id])
   answers   Answer[]
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 }
 
 model Answer {
-  id         String   @id @default(cuid())
-  response   Response @relation(fields: [responseId], references: [id])
+  id         String    @id @default(cuid())
+  response   Response  @relation(fields: [responseId], references: [id])
   responseId String
+
+  question   Question  @relation(fields: [questionId], references: [id])
   questionId String
+
   value      Int
 }
 
