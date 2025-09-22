@@ -4,7 +4,12 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()
 
   try {
-    const { title, description, questions } = req.body
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
+    const { title, description, questions } = body
+
+    if (!title || !questions?.length) {
+      return res.status(400).json({ error: 'Missing title or questions' })
+    }
 
     const survey = await prisma.survey.create({
       data: {
@@ -22,7 +27,7 @@ export default async function handler(req, res) {
 
     res.json(survey)
   } catch (e) {
-    console.error(e)
+    console.error('Error creating survey:', e)
     res.status(500).json({ error: 'Error creating survey' })
   }
 }

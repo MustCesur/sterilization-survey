@@ -2,13 +2,24 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 
 export default function SurveyPage(){
-  const [survey, setSurvey] = useState(null)
+  const [survey, setSurvey] = useState(undefined)
   const [answers, setAnswers] = useState({})
   const [status, setStatus] = useState('')
 
-  useEffect(()=>{ axios.get('/api/surveys').then(r=> setSurvey(r.data[0])) },[])
+  useEffect(()=>{
+    axios.get('/api/surveys')
+      .then(r => {
+        if(r.data.length > 0){
+          setSurvey(r.data[0])
+        } else {
+          setSurvey(null)
+        }
+      })
+      .catch(() => setSurvey(null))
+  },[])
 
-  if(!survey) return <div>Loading survey…</div>
+  if(survey === undefined) return <div>Loading survey…</div>
+  if(survey === null) return <div>No surveys available yet.</div>
 
   function onChange(qid, val){
     setAnswers(prev=> ({...prev, [qid]: Number(val)}))
